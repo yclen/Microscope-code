@@ -22,7 +22,7 @@ def declare_varibles(turn_on_laser=True):
     global ND
     global table
 
-    experiment_filename = "cvp1.csv"
+    experiment_filename = "cvp4.csv"
     pabfile = "pab_FELH650_10nmBW-3.csv"
 
     ready = True
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     sweep_powers(700)
     turn_off_laser()
     save_table()
-    plot1()
+    plot1(experiment_filename)
     
 
 

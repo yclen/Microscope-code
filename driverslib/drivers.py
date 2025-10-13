@@ -3,6 +3,20 @@ import time
 import numpy as np
 
 
+class testClass:
+    def __init__(self):
+        print("testClass initialized")
+        self.test = "test"
+    
+    def test_method(self):
+        print("test_method called")
+        return self.test
+
+
+
+
+
+
 class TimetaggerDriver:
     def __init__(self, binwidth=10e9, num_bins=5):
         self.binwidth = binwidth #in ps (10e9 ps is 10ms)
@@ -158,6 +172,11 @@ class GalvoController:
 
     def zero(self):
         self.set_voltage(0, 0)
+
+
+
+
+
 
 from pyvisa import ResourceManager
 

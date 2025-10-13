@@ -1,8 +1,8 @@
 from driverslib.my_csv import *
 
 
-def plot1():
-    data = read_csv("cvp1.csv")
+def plot1(filename):
+    data = read_csv(filename)
     
     wavelengths = data.wavelengths
     for wavelength in wavelengths:
@@ -17,7 +17,7 @@ def plot1():
     plt.show()
 
 def plot2():
-    data = read_csv("cvp1.csv")
+    data = read_csv("cvp2.csv")
     
     wavelengths = data.wavelengths
     for wavelength in wavelengths:
@@ -50,5 +50,24 @@ def plot2():
     plt.show()
 
 
+def plot1_2():
+    data1 = read_csv("cvp4.csv")
+    data2 = read_csv("cvp3.csv")
+
+    powers1 = data1.table[700][2]
+    counts1 = data1.table[700][3]
+    powers2 = data2.table[700][2]
+    counts2 = data2.table[700][3]
+    plt.xlabel('Power (mW)')
+    plt.ylabel('Counts')
+    plt.legend(['no sample', 'sample'])
+    plt.plot(powers1, counts1, '.-')
+    plt.plot(powers2, counts2, '.-')
+    plt.show()
+
+
+    
+
+
 if __name__ == "__main__":
-    plot2()
+    plot1_2()
