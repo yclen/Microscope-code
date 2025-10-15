@@ -1,7 +1,9 @@
-from driverslib.drivers import *
 from driverslib.my_csv import *
 from driverslib.funcs import *
 from plot import *
+from nspyre import InstrumentManager
+import time
+import numpy as np
 
 
 
@@ -43,11 +45,14 @@ def setup_devices():
     global z
     global tt
     global laser
+    global inserv
+
+    inserv = InstrumentManager()
 
     print("Setting up devices...")
-    z = ZaberDriver()
-    tt = TimetaggerDriver()
-    laser = Laser()
+    z = inserv.Zaber
+    tt = inserv.Timetagger
+    laser = inserv.Laser
     laser.__enter__()
     z.move_to_waiting(start_position, ND, velocity=fast_speed)
     print("Devices ready.")

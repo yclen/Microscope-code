@@ -52,10 +52,20 @@ with InstrumentServer() as inserv:
             class_path=Path(__file__).parent / 'Drivers/Piezo.py',
             class_name='piezodriver'
         )
+    # inserv.add(
+    #         name='Timetagger',
+    #         class_path=Path(__file__).parent / 'Drivers/Timetagger.py',
+    #         class_name='TimetaggerDriver'
+    #     )
+    # inserv.add(
+    #         name='pulseStreamer',
+    #         class_path=Path(__file__).parent / 'Drivers/PulseStreamer.py',
+    #         class_name='pulsestreamer'
+    #     )
     inserv.add(
-            name='Timetagger',
-            class_path=Path(__file__).parent / 'Drivers/Timetagger.py',
-            class_name='TimetaggerDriver'
+            name='pointscandriver',
+            class_path=Path(__file__).parent / 'Drivers/pointscandriver.py',
+            class_name='pointscandriver'
         )
 
 

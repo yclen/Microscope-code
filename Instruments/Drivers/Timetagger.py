@@ -1,6 +1,7 @@
-import TimeTagger
+
 import time
 import numpy as np
+from TimeTagger import createTimeTagger, CountBetweenMarkers
 
 
 
@@ -8,18 +9,24 @@ import numpy as np
 class TimetaggerDriver:
     def __init__(self, binwidth=10e9, num_bins=5):
         try:
-            self.binwidth = binwidth #in ps (10e9 ps is 10ms)
-            self.num_bins = num_bins
+            
             print("connecting to timetagger...")
-            self.tagger = TimeTagger.createTimeTagger()
-            self.tagger.setTriggerLevel(1, 1.0)  # 1V threshold on channel 1
-            self.counter = TimeTagger.Counter(self.tagger, channels=[1], binwidth=self.binwidth, n_values=self.num_bins) #binwidth is in ps (10e9 is 10ms)
+            self.tagger = createTimeTagger()
+            
+            
         except:
             self.binwidth = None
             self.num_bins = None
             self.tagger = None
             self.counter = None
             print("Failed to connect to timetagger")
+
+    def set_trigger_level(self, channel, level):
+        self.tagger.setTriggerLevel(channel, level)
+
+
+    def count_between_markers(self, channel1, channel2, n):
+        return CountBetweenMarkers(self.tagger, channel1, channel2, n_values=n)
 
     def get_counts_per_second(self):
         #returns counts per second
@@ -29,6 +36,7 @@ class TimetaggerDriver:
     def set_counter(self, binwidth, num_bins):
         self.binwidth = binwidth
         self.num_bins = num_bins
+        self.tagger.setTriggerLevel(1, 1.0)  # 1V threshold on channel 1
         self.counter = TimeTagger.Counter(self.tagger, channels=[1], binwidth=self.binwidth, n_values=self.num_bins)
 
     def get_counts(self):
