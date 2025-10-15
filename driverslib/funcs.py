@@ -5,27 +5,28 @@ import matplotlib.pyplot as plt
 
 def set_bandwidth(wavelength, width):
 
-
+    #updated 10/9/25
     def wave(position, i):
         if i == 1:
-            return -6.07 * position + 998.91
+            return -6.11 * position + 980.09
         elif i == 2:
-            return -6.12 * position + 990.93
+            return -6.21 * position + 1006.89
     
     def position(wave, i):
         if i == 1:
-            return (wave - 998.91) / -6.07
+            return (wave - 980.09) / -6.11
         elif i == 2:
-            return (wave - 990.93) / -6.12
+            return (wave - 1006.89) / -6.21
 
     #wave1 is right and wave2 is left
-    wave1 = wavelength - width/2
-    wave2 = wavelength + width/2
+    wave1 = wavelength + width/2
+    wave2 = wavelength - width/2
 
     position1 = position(wave1, 1)
     position2 = position(wave2, 2)
 
-    return position2, position1
+    return position1, position2
+
 
 
 

@@ -3,20 +3,6 @@ import time
 import numpy as np
 
 
-class testClass:
-    def __init__(self):
-        print("testClass initialized")
-        self.test = "test"
-    
-    def test_method(self):
-        print("test_method called")
-        return self.test
-
-
-
-
-
-
 class TimetaggerDriver:
     def __init__(self, binwidth=10e9, num_bins=5):
         self.binwidth = binwidth #in ps (10e9 ps is 10ms)
@@ -95,7 +81,7 @@ class ZaberDriver:
         device = self.devices[i]
         axis = device.get_axis(1)
         axis.move_velocity(speed, Units.VELOCITY_MILLIMETRES_PER_SECOND)
-        print(f"Device {i+1} moving at {speed} mm/s")
+        #print(f"Device {i+1} moving at {speed} mm/s")
 
     def stop(self, i):
         device = self.devices[i]
@@ -172,11 +158,6 @@ class GalvoController:
 
     def zero(self):
         self.set_voltage(0, 0)
-
-
-
-
-
 
 from pyvisa import ResourceManager
 
