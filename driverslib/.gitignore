@@ -1,0 +1,5 @@
+# Ignore everything in the data folder
+data/*
+
+# But keep this specific file
+!data/data.txt
