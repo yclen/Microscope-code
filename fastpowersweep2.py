@@ -14,12 +14,12 @@ slow_speed = 2
 fast_speed = 30
 going_slow = False
 table = {}
-experiment_filename = "fastpowersweep_new1.csv"
+experiment_filename = "jf525_col_535-70_2xfesh600_ex_fesh900-felh650.csv"
 pabfile = "pab_FELH650_10nmBW-3.csv"
 pab = mc.read_csv(pabfile)
 pab_table = pab.table
 wavelengths = pab.wavelengths
-#wavelengths = [655, 670, 700, 750, 785]
+#wavelengths = [655, 670, 700, 790]
 
 def turn_on_laser():
     

@@ -1,8 +1,9 @@
 from driverslib.my_csv import *
 
 
-def plot1():
-    data = read_csv("fastpowersweep.csv")
+def plot1(filename, i=1):
+    plt.figure(i)
+    data = read_csv(filename)
     
     wavelengths = data.wavelengths
     for wavelength in wavelengths:
@@ -13,8 +14,8 @@ def plot1():
     plt.xlabel('Position (mm)')
     plt.ylabel('Counts')
     plt.legend(wavelengths)
-    plt.title('Counts vs Position')
-    plt.show()
+    plt.title(filename)
+    #plt.show()
 
 def plot2():
     data = read_csv("cvp1.csv")
@@ -116,7 +117,7 @@ def plot3(wavelength=700):
 
 
 def plot4():
-    data = read_csv("fastpowersweep_new.csv")
+    data = read_csv("fastpowersweep_live_dark3.csv")
 
 
 
@@ -221,4 +222,7 @@ def plot5():
 
 
 if __name__ == "__main__":
-    plot4()
+    plot1("darktest_d561_col_535-70_2xfesh600_ex_fesh900.csv", 1)
+    plot1("darktest_d561_col_535-70_2xfesh600_ex_fesh900-felh600-625.csv", 2)
+    plot1("darktest_d561_col_535-70_2xfesh600_ex_fesh900-fgs900.csv", 3)
+    plt.show()

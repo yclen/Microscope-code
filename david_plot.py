@@ -7,7 +7,7 @@ import numpy as np
 
 
 def david(power_level=2, plot=True):
-    data = mc.read_csv('fastpowersweep_new1.csv')
+    data = mc.read_csv('jf525_col_535-70_2xfesh600_ex_fesh900-felh650.csv')
     table = data.table
     wavelengths = data.wavelengths
     #wavelengths = [655, 670, 700, 750, 785]
