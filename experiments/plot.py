@@ -1,6 +1,29 @@
 from driverslib.my_csv import *
 
 
+def plot_pab(filename):
+    pab = read_csv(filename)
+    pab_table = pab.table
+    wavelengths = pab.wavelengths
+    #wavelengths = [600, 625, 630, 635, 640, 655, 670, 700, 750, 785]
+    wavelengths = wavelengths[7:]
+    print(len(wavelengths), wavelengths)
+    power = 10
+
+    
+    for wavelength in wavelengths:
+        positions = pab_table[wavelength][2]
+        powers = pab_table[wavelength][1]
+        plt.plot(positions, powers, '.-')
+        position = np.interp(power, powers, positions)
+        print(f"Wavelength: {wavelength} nm, Power: {power} mW, Position: {round(position, 2)} mm")
+    plt.xlabel('Position (mm)')
+    plt.ylabel('Power (mW)')
+    plt.legend(wavelengths)
+    plt.title(filename)
+    plt.show()
+
+
 def plot1(filename, i=1):
     plt.figure(i)
     data = read_csv(filename)
@@ -222,7 +245,4 @@ def plot5():
 
 
 if __name__ == "__main__":
-    plot1("darktest_d561_col_535-70_2xfesh600_ex_fesh900.csv", 1)
-    plot1("darktest_d561_col_535-70_2xfesh600_ex_fesh900-felh600-625.csv", 2)
-    plot1("darktest_d561_col_535-70_2xfesh600_ex_fesh900-fgs900.csv", 3)
-    plt.show()
+    plot_pab("pab_di785_Ex-FGL630M-FELH625-di561_10nmBW.csv")

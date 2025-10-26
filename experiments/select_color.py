@@ -2,7 +2,7 @@ from driverslib.drivers import ZaberDriver
 from driverslib.funcs import set_bandwidth
 
 # Default bandwidth
-width = 10
+width = 15
 
 # Setup device
 print("Setting up device...")

@@ -8,15 +8,15 @@ def set_bandwidth(wavelength, width):
     #updated 10/9/25
     def wave(position, i):
         if i == 1:
-            return -6.11 * position + 980.09
+            return -6.05 * position + 938.07
         elif i == 2:
-            return -6.21 * position + 1006.89
+            return -6.13 * position + 956.45
     
     def position(wave, i):
         if i == 1:
-            return (wave - 980.09) / -6.11
+            return (wave - 938.07) / -6.05
         elif i == 2:
-            return (wave - 1006.89) / -6.21
+            return (wave - 956.45) / -6.13
 
     #wave1 is right and wave2 is left
     wave1 = wavelength + width/2
@@ -26,6 +26,7 @@ def set_bandwidth(wavelength, width):
     position2 = position(wave2, 2)
 
     return position1, position2
+
 
 
 

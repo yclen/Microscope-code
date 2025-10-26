@@ -4,22 +4,22 @@ from driverslib.funcs import *
 from plot import *
 
 ND = 3
-width = 10
+width = 15
 dwell_time = 0.01
 max_power = 11
-start_position = 100
-end_position = 13
+start_position = 98
+end_position = 4
 slow_position = 40
 slow_speed = 2
 fast_speed = 30
 going_slow = False
 table = {}
-experiment_filename = "jf525_col_535-70_2xfesh600_ex_fesh900-felh650.csv"
-pabfile = "pab_FELH650_10nmBW-3.csv"
+experiment_filename = "jf525_di561_Ex-FGL630M-FELH625.csv"
+pabfile = "pab_di785_Ex-FGL630M-FELH625-di561_10nmBW.csv"
 pab = mc.read_csv(pabfile)
 pab_table = pab.table
 wavelengths = pab.wavelengths
-#wavelengths = [655, 670, 700, 790]
+#wavelengths = [630, 655, 670, 700, 790]
 
 def turn_on_laser():
     
@@ -77,22 +77,24 @@ def sweep_powers():
         print(f"Position: {position} mm.  Counts: {count}")
     return counts, positions
 
+turn_on_laser()
+g.set_position(14, 44)
 for wavelength in wavelengths:
     set_wavelength(wavelength, width)
     z.move_to_waiting(start_position, ND, velocity=fast_speed)
-    turn_on_laser()
+    
     counts, positions = sweep_powers()
-    turn_off_laser()
+    
 
     #save table
     table[wavelength] = np.array([positions, counts])
     print(f"Saved table for {wavelength} nm")
 
-
+turn_off_laser()
 mc.save_table_to_csv(table, experiment_filename, 
     ["Wavelength (nm)", "Position (mm)", "Counts"])
 
-
+g.zero_position()
 #read table
 data = mc.read_csv(experiment_filename)
 table = data.table

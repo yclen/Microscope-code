@@ -3,17 +3,30 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as colors
 import numpy as np
+from scipy.ndimage import gaussian_filter1d
 
+import numpy as np
 
+def rolling_derivative(x, y):
+    derivatives = []
+    indices = []
+    for i in range(len(x)):
+        slope, intercept = np.polyfit(x[-i:], y[-i:], 1)
+        derivatives.append(slope)
+        indices.append(i)
+    return np.array(derivatives)[50:], np.array(indices)[50:]
+    
+    
 
-def david(power_level=2, plot=True):
-    data = mc.read_csv('jf525_col_535-70_2xfesh600_ex_fesh900-felh650.csv')
+def david(power_level=2, plot=True, all_waves=True, w=[655, 670, 700, 750, 785]):
+    data = mc.read_csv('jf525_di561_Ex-FGL630M-FELH625.csv')
     table = data.table
-    wavelengths = data.wavelengths
-    #wavelengths = [655, 670, 700, 750, 785]
+    wavelengths = data.wavelengths[:-1]
+    if not all_waves:
+        wavelengths = w
 
 
-    pab = mc.read_csv('pab_FELH650_10nmBW-3.csv')
+    pab = mc.read_csv('pab_di785_Ex-FGL630M-FELH625-di561_10nmBW.csv')
     pab_table = pab.table
 
     david_table = {}
@@ -22,6 +35,10 @@ def david(power_level=2, plot=True):
     for wavelength in wavelengths:
         positions = table[wavelength][1]
         counts = table[wavelength][2]
+
+        mask = positions < 90
+        positions = positions[mask]
+        counts = counts[mask]
 
 
         positions_pab = pab_table[wavelength][2]
@@ -45,14 +62,20 @@ def david(power_level=2, plot=True):
             plt.plot(positions, counts, '.-')
             plt.figure(2)
             plt.plot(powers, counts, '.-')
-            plt.figure(3)
+            
         log_powers = np.log(powers)
         log_counts = np.log(counts)
         slope, intercept = np.polyfit(log_powers[-50:], log_counts[-50:], 1)
+        #dlogcounts, indices = rolling_derivative(log_powers, log_counts)
+        #slope = np.max(dlogcounts)
         print(f"Slope for wavelength {wavelength} is {slope}")
         if plot:
+            plt.figure(3)
             plt.plot(log_powers, log_counts, '.-')
             plt.plot(log_powers[-100:], slope*log_powers[-100:] + intercept, '-')
+            # plt.figure(4)
+            
+            # plt.plot(indices, dlogcounts, '.-')
 
         cap1 = int(np.interp(power_level, powers, counts))
         if powers.max() < power_level:
@@ -78,6 +101,11 @@ def david(power_level=2, plot=True):
         plt.ylabel('Log Counts')
         plt.legend(wavelengths)
         plt.title('Log-Log Plot')
+        plt.figure(4)
+        plt.xlabel('Log Power')
+        plt.ylabel('Gradient')
+        plt.legend(wavelengths)
+        plt.title('Gradient of Log-Log Plot')
         plt.show()
     return wavelengths, exponents, counts_at_power
 
@@ -85,9 +113,9 @@ def david(power_level=2, plot=True):
 
 
 if __name__ == '__main__':
-    p = 5
-    wavelengths, exponents, counts_at_power = david(power_level=p, plot=False)
-    #print(wavelengths, exponents, counts_at_power)
+    p = 10
+    wavelengths, exponents, counts_at_power = david(power_level=p, plot=True, all_waves=False, w=[700, 785])
+    #print(wavelengths, exponents, counts_at_power) 670
     
     # Convert to numpy arrays
     wavelengths = np.array(wavelengths)
@@ -98,7 +126,7 @@ if __name__ == '__main__':
     fig, ax = plt.subplots()
     
     # Create colormap normalization
-    norm = colors.Normalize(vmin=1, vmax=2.2)
+    norm = colors.Normalize(vmin=1, vmax=2)
     cmap = cm.jet
     
     # Plot each wavelength segment with color corresponding to its exponent

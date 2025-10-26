@@ -110,7 +110,7 @@ class GalvoController:
         self.ps = PulseStreamer(ip_address)
         print(f"Connected to PulseStreamer at {ip_address}")
     
-    def set_position(self, x_meters, y_meters):
+    def set_position(self, x_microns, y_microns):
         """
         Set galvo position to specified coordinates.
         
@@ -119,13 +119,13 @@ class GalvoController:
             y_meters: Y position in meters
         """
         # Convert meters to micrometers, then to volts
-        x_volts = x_meters * 1e6 * self.volts_per_micron
-        y_volts = y_meters * 1e6 * self.volts_per_micron
+        x_volts = x_microns * self.volts_per_micron
+        y_volts = y_microns * self.volts_per_micron
         
         # Set constant output: (digital_channels_list, x_analog_voltage, y_analog_voltage)
         self.ps.constant(([], x_volts, y_volts))
         
-        print(f"Galvo position set to: ({x_meters*1e6:.1f} µm, {y_meters*1e6:.1f} µm)")
+        print(f"Galvo position set to: ({x_microns:.1f} µm, {y_microns:.1f} µm)")
         print(f"Voltage output: ({x_volts:.3f} V, {y_volts:.3f} V)")
     
     def set_voltage(self, x_volts, y_volts):

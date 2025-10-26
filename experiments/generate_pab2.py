@@ -3,22 +3,22 @@ from driverslib.funcs import *
 from driverslib.my_csv import *
 import numpy as np
 import time
-
+import plot
 
 
 ready = True
-filename = "pab_FELH650_10nmBW-3.csv"
+filename = "pab_di785_Ex-FGL630M-FELH625-di561_10nmBW.csv"
 
 #wavelength information
-start_wavelength = 655
-end_wavelength = 795
-width = 10
+start_wavelength = 600
+end_wavelength = 790
+width = 15
 step = 5
 wavelengths = np.arange(start_wavelength, end_wavelength, step)
 print("Scanning through", wavelengths.size, "wavelengths")
 print(wavelengths)
 
-#wavelengths = np.array([655])
+#wavelengths = np.array([650, 700])
 
 
 if ready:
@@ -34,54 +34,62 @@ else:
     print("Not ready")
     print("Starting without drivers")
 
+def set_wavelength(wavelength, width):
+    position1, position2 = set_bandwidth(wavelength, width)
+    z.move_to(position1, 1, velocity=fast_speed)
+    z.move_to_waiting(position2, 2, velocity=fast_speed)
 
-
-start_position = 100
-end_position = 10
-slow_position = 20
+start_position = 90
+end_position = 3.5
+slow_position = 22
 slow_speed = 2
-fast_speed = 10
+fast_speed = 18
+super_fast_speed = 30
 start=time.time();i=0
 table = {}
 
 laser.on();print("Turning laser on ...");time.sleep(2)
 
 for wave in wavelengths:
-    position1, position2 = set_bandwidth(wave, width);i+=1
-    if ready:
-        z.move_to(position1, 1, velocity=20)
-        z.move_to_waiting(position2, 2, velocity=fast_speed)
+
+
+    set_wavelength(wave, width);i+=1
+
+
+
     print("Moving to", wave, "staring measurement...")
 
     pm.set_correction_wavelength(wave)
     powers = []
     positions = []
 
-    z.move_to_waiting(start_position, ND, velocity=20)
-    z.move_to(slow_position-1, ND, velocity=20)
+    z.move_to_waiting(start_position, ND, velocity=super_fast_speed)
+
+    z.move_velocity(-fast_speed, ND)
+    
+    going_slow = False
     while True:
         position = z.get_position(ND)
-        power = pm.power()
-        powers.append(power*1000)
+        power = pm.power()*1000
+        powers.append(power)
         positions.append(position)
-        print(f"Position: {position} mm.  Power: {power} W, {power*1000} mW")
-        time.sleep(0.01)
-        if position <= slow_position:
+        print(f"Wavelength: {wave} nm, Position: {round(position, 2)} mm. {round(power, 2)} mW")
+        
+
+
+        if position <= slow_position and not going_slow:
+            going_slow = True
+            z.move_velocity(-slow_speed, ND)
+            
+        if position <= end_position:
+
             break
 
-    z.move_to(end_position-1, ND, velocity=slow_speed)
-    while True:
-        position = z.get_position(ND)
-        power = pm.power()
-        powers.append(power*1000)
-        positions.append(position)
-        print(f"Position: {position} mm.  Power: {power} W, {power*1000} mW")
-        time.sleep(0.01)
-        if position <= end_position:
-            break
+
+   
     
     table[wave] = np.array([powers, positions])
-    print("Collected positions and powers","-------", int(i/wavelengths.size*100),"% complete")
+    print("Collected positions and powers:",len(powers), "-------", int(i/wavelengths.size*100),"% complete")
 
 laser.off()
 laser.__exit__(None, None, None)
@@ -95,5 +103,5 @@ mc.save_table_to_csv(table, filename, columns_names)
 
 end=time.time();print("Total experiment time:",round(end-start,4),"seconds")
 
-
+plot.plot_pab(filename)
 
