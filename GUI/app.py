@@ -3,7 +3,7 @@
 import sys
 
 from nspyre import nspyreApp, MainWidget, MainWidgetItem
-from widgets import zaber_widget
+from widgets import zaber_widget, connections_widget
 
 
 def main():
@@ -13,11 +13,18 @@ def main():
     # Create Qt application with nspyre styling
     app = nspyreApp()
     
-    # Create the main widget with Zaber control
+    # Create the main widget with Connections and Zaber control
     main_widget = MainWidget(
         {
+            'Connections': {
+                'Device Connections': MainWidgetItem(
+                    connections_widget,
+                    'ConnectionsWidget',
+                    stretch=(1, 1)
+                ),
+            },
             'Zaber Stages': {
-                'Stage Control': MainWidgetItem(
+                'Filter Stages': MainWidgetItem(
                     zaber_widget,
                     'ZaberControlWidget',
                     stretch=(1, 1)

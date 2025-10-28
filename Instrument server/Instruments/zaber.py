@@ -5,12 +5,47 @@ import time
 
 class ZaberDriver:
     def __init__(self, com_port="COM5", baud_rate=115200):
-        self.conn = Connection.open_serial_port(com_port, baud_rate)
-        self.devices = self.conn.detect_devices()
-        print("zaber initialized")
+        self.com_port = com_port
+        self.baud_rate = baud_rate
+        self.conn = None
+        self.devices = None
+        self.connected = False
+        print("ZaberDriver initialized (not connected)")
+    
+    def connect(self):
+        """Connect to Zaber devices"""
+        if self.connected:
+            print("Already connected to Zaber")
+            return True
+        
+        try:
+            self.conn = Connection.open_serial_port(self.com_port, self.baud_rate)
+            self.devices = self.conn.detect_devices()
+            self.connected = True
+            print(f"Zaber connected: {len(self.devices)} devices found")
+            return True
+        except Exception as e:
+            print(f"Failed to connect to Zaber: {e}")
+            self.connected = False
+            return False
+    
+    def disconnect(self):
+        """Disconnect from Zaber devices"""
+        if self.conn:
+            self.conn.close()
+            self.conn = None
+            self.devices = None
+            self.connected = False
+            print("Zaber disconnected")
+    
+    def is_connected(self):
+        """Check if connected"""
+        return self.connected
         
         
     def move_to(self, position, i, velocity=None):
+        if not self.connected:
+            raise RuntimeError("Zaber not connected. Call connect() first.")
         device = self.devices[i]
         axis = device.get_axis(1)
         
@@ -22,6 +57,8 @@ class ZaberDriver:
         #print(f"Device {i+1} moved to {position} mm")
 
     def move_to_waiting(self, position, i, velocity=None):
+        if not self.connected:
+            raise RuntimeError("Zaber not connected. Call connect() first.")
         device = self.devices[i]
         axis = device.get_axis(1)
         if velocity is not None:
@@ -34,18 +71,24 @@ class ZaberDriver:
 
 
     def get_position(self, i):
+        if not self.connected:
+            raise RuntimeError("Zaber not connected. Call connect() first.")
         device = self.devices[i]
         axis = device.get_axis(1)
         position = axis.get_position(Units.LENGTH_MILLIMETRES)
         return position
 
     def move_velocity(self, speed, i):
+        if not self.connected:
+            raise RuntimeError("Zaber not connected. Call connect() first.")
         device = self.devices[i]
         axis = device.get_axis(1)
         axis.move_velocity(speed, Units.VELOCITY_MILLIMETRES_PER_SECOND)
         #print(f"Device {i+1} moving at {speed} mm/s")
 
     def stop(self, i):
+        if not self.connected:
+            raise RuntimeError("Zaber not connected. Call connect() first.")
         device = self.devices[i]
         axis = device.get_axis(1)
         axis.stop()

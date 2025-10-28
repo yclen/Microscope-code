@@ -31,7 +31,10 @@ class ZaberControlWidget(QWidget):
     
     def create_stage_group(self, stage_num):
         """Create control group for a single stage"""
-        group = QGroupBox(f"Stage {stage_num}")
+        if stage_num < 3:
+            group = QGroupBox(f"Filter {stage_num}")
+        else:
+            group = QGroupBox(f"ND Filter")
         layout = QVBoxLayout()
         
         # Position display
@@ -151,11 +154,26 @@ class ZaberControlWidget(QWidget):
     
     def update_positions(self):
         """Update position displays for all stages"""
+        # Check if connected first
+        try:
+            if not self.zaber.is_connected():
+                # Set all to disconnected state
+                for stage_num in [1, 2, 3]:
+                    pos_label = self.findChild(QLabel, f"pos_label_{stage_num}")
+                    pos_label.setText("Not connected")
+                return
+        except Exception as e:
+            print(f"Error checking connection: {e}")
+            return
+        
+        # Update positions
         for stage_num in [1, 2, 3]:
             try:
                 position = self.zaber.get_position(stage_num)
                 pos_label = self.findChild(QLabel, f"pos_label_{stage_num}")
                 pos_label.setText(f"{position:.2f} mm")
             except Exception as e:
+                pos_label = self.findChild(QLabel, f"pos_label_{stage_num}")
+                pos_label.setText("Error")
                 print(f"Error reading position for stage {stage_num}: {e}")
 
